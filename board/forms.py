@@ -5,10 +5,10 @@ from board.models import User
 
 class RegisterForm(forms.ModelForm):
     username = forms.CharField(
-        label='Имя пользователя для входа', min_length=3, max_length=30, help_text='Required'
+        label='Имя пользователя для входа', min_length=3, max_length=30
     )
-    first_name = forms.CharField(label='Имя', help_text='Required')
-    last_name = forms.CharField(label='Фамилия', help_text='Required')
+    first_name = forms.CharField(label='Имя')
+    last_name = forms.CharField(label='Фамилия')
     password = forms.CharField(label='Пароль', widget=forms.PasswordInput)
     password2 = forms.CharField(label='Повторите пароль', widget=forms.PasswordInput)
 
@@ -33,7 +33,7 @@ class RegisterForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['username'].widget.attrs.update(
-            {'class': 'form-control mb-3', 'placeholder': 'Пользователь'}
+            {'class': 'form-control mb-3', 'placeholder': 'Nikname'}
         )
         self.fields['first_name'].widget.attrs.update(
             {'class': 'form-control mb-3', 'placeholder': 'Имя'}
@@ -47,3 +47,7 @@ class RegisterForm(forms.ModelForm):
         self.fields['password2'].widget.attrs.update(
             {'class': 'form-control', 'placeholder': 'Повторите пароль'}
         )
+
+
+class BoardMessageCreateForm(forms.ModelForm):
+    pass

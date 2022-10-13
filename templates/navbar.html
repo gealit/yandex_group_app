@@ -1,0 +1,61 @@
+<nav class="navbar navbar-expand-lg bg-light">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="{% url 'board' %}">Когорта 52 yandex</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <li class="nav-item">
+          <a class="nav-link active" aria-current="page" href="{% url 'board' %}">Доска объявлений</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'board_create' %}">Добавить запись</a>
+        </li>
+{#        <li class="nav-item dropdown">#}
+{#          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">#}
+{#            Dropdown#}
+{#          </a>#}
+{#          <ul class="dropdown-menu">#}
+{#            <li><a class="dropdown-item" href="#">Action</a></li>#}
+{#            <li><a class="dropdown-item" href="#">Another action</a></li>#}
+{#            <li><hr class="dropdown-divider"></li>#}
+{#            <li><a class="dropdown-item" href="#">Something else here</a></li>#}
+{#          </ul>#}
+{#        </li>#}
+{#        <li class="nav-item">#}
+{#          <a class="nav-link disabled">Disabled</a>#}
+{#        </li>#}
+      </ul>
+      {% if request.user.is_authenticated %}
+      <ul class="d-flex">
+          Добро пожаловать, {{ request.user.get_full_name }}
+      </ul>
+      <ul class="d-flex">
+          <a class="nav-link" href="{% url 'logout' %}">
+            <button class="btn btn-outline-success" type="submit">Выйти</button>
+          </a>
+      </ul>
+      {% else %}
+          <ul class="d-flex">
+          <a href="{% url 'login' %}"><button class="btn btn-outline-success">Войти</button></a>
+          </ul>
+          <ul class="d-flex">
+          <a href="{% url 'register' %}"><button class="btn btn-outline-success">Зарегистрироваться</button></a>
+          </ul>
+          <ul class="d-flex">
+            <div class="btn-group dropstart">
+              <button type="button" class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                Инфо
+              </button>
+              <ul class="dropdown-menu">
+                Когорта 52 yandex<br>
+                Господа, можете придумать и реализовать тут всё что угодно, вся эта тема для ознакомления<br><br>
+                Сайт очень не защищен, используйте пароли попроще и не свои :) Хотя они всё равно шифруются.
+              </ul>
+            </div>
+          </ul>
+      {% endif %}
+    </div>
+  </div>
+</nav>
