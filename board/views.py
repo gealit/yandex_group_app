@@ -5,13 +5,14 @@ from django.contrib.auth.views import LoginView
 from django.http import Http404
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
-from django.views.generic import FormView, ListView, CreateView, DeleteView
+from django.views.generic import FormView, ListView, CreateView, DeleteView, UpdateView
 
-from board.forms import RegisterForm
+from board.forms import RegisterForm, BoardMessageCreateForm, CustomLoginForm
 from board.models import BoardMessage
 
 
 class LoginPage(LoginView):
+    form_class = CustomLoginForm
     template_name = 'board/login.html'
     redirect_authenticated_user = True
     next_page = '/'
@@ -42,13 +43,32 @@ class BoardListView(LoginRequiredMixin, ListView):
 
 class BoardMessageCreateView(LoginRequiredMixin, CreateView):
     model = BoardMessage
-    fields = ('title', 'text', 'image')
+    form_class = BoardMessageCreateForm
     template_name = 'board/boardmessage_create.html'
     success_url = reverse_lazy('board')
 
     def form_valid(self, form):
         form.instance.author = self.request.user
         return super(BoardMessageCreateView, self).form_valid(form)
+
+
+class BoardMessageUpdateView(LoginRequiredMixin, UpdateView):
+    model = BoardMessage
+    form_class = BoardMessageCreateForm
+    template_name = 'board/boardmessage_update.html'
+    success_url = reverse_lazy('board')
+
+    def get_object(self, queryset=None):
+        """ Hook to ensure object is owned by request.user. """
+        obj = super(BoardMessageUpdateView, self).get_object()
+        if not obj.author == self.request.user:
+            raise Http404
+        return obj
+
+    def get_queryset(self):
+        """ Limit a User to only modifying their own data. """
+        queryset = super(BoardMessageUpdateView, self).get_queryset()
+        return queryset.filter(author=self.request.user).select_related('author')
 
 
 class BoardMessageDeleteView(LoginRequiredMixin, DeleteView):

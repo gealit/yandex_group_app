@@ -2,18 +2,29 @@
 
 {% block content %}
 
-    <h2><span class="badge bg-secondary">Это пробное приложение, каждый из Вас может изменить здесь всё что угодно.</span></h2>
+    <h2><span class="badge bg-secondary">Это пробное приложение, каждый из Вас может изменить здесь всё что угодно.</span>
+        <a href="https://github.com/gealit/yandex_group_app">[Код здесь]</a></h2>
     <hr>
-
 {% for item in object_list %}
-    Автор: {{ item.author.get_full_name }} - {{ item.date_added }}
+    Автор: {{ item.author.get_full_name }} - {{ item.date_added }} {% if item.date_added != item.date_updated %} (обновлено: {{ item.date_updated }}) {% endif %}
     <h2>{{ item.title }}</h2>
-    {% if item.image %}<img height="400" src="{{ item.image.url }}"><br><br>{% endif %}
+    <div class="container" style="display: flex; padding: 0px 0px 10px 0px;">
+    {% if item.image %}
+        <a href="{{ item.image.url }}">
+            <img class="img-thumbnail float-start" style="max-width: 300px" src="{{ item.image.url }}" alt="Иллюстрация">
+        </a>
+    {% endif %}
+        <div style="margin: 15px 15px;">
     {{ item.text }}<br><br>
+        </div>
+    </div>
     {% if item.author == request.user %}
-    <a href="{% url 'board_delete' item.id %}"><button>Удалить сообщение</button></a>
+
+        <a href="{% url 'board_update' item.id %}"><button class="btn btn-secondary">Обновить пост</button></a>
+        <a href="{% url 'board_delete' item.id %}"><button class="btn btn-secondary">Удалить пост</button></a>
     {% endif %}
     <hr>
+
 {% endfor %}
 
 {% endblock content %}

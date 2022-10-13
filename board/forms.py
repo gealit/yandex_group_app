@@ -1,6 +1,18 @@
 from django import forms
+from django.contrib.auth.forms import AuthenticationForm
 
-from board.models import User
+from board.models import User, BoardMessage
+
+
+class CustomLoginForm(AuthenticationForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['username'].widget.attrs.update(
+            {'class': 'form-control mb-3', 'placeholder': 'Пользователь'}
+        )
+        self.fields['password'].widget.attrs.update(
+            {'class': 'form-control', 'placeholder': 'Пароль'}
+        )
 
 
 class RegisterForm(forms.ModelForm):
@@ -50,4 +62,11 @@ class RegisterForm(forms.ModelForm):
 
 
 class BoardMessageCreateForm(forms.ModelForm):
-    pass
+    def __init__(self, *args, **kwargs):
+        super(BoardMessageCreateForm, self).__init__(*args, **kwargs)
+        for visible in self.visible_fields():
+            visible.field.widget.attrs['class'] = 'form-control'
+
+    class Meta:
+        model = BoardMessage
+        fields = ('title', 'text', 'image')
