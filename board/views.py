@@ -1,14 +1,14 @@
 from django.contrib import messages
 from django.contrib.auth import login
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.contrib.auth.views import LoginView
+from django.contrib.auth.views import LoginView, PasswordChangeView
 from django.http import Http404
 from django.shortcuts import redirect
 from django.urls import reverse_lazy
 from django.views.generic import FormView, ListView, CreateView, DeleteView, UpdateView
 
-from board.forms import RegisterForm, BoardMessageCreateForm, CustomLoginForm
-from board.models import BoardMessage
+from board.forms import RegisterForm, BoardMessageCreateForm, CustomLoginForm, EditProfileForm, CustomPasswordChangeForm
+from board.models import BoardMessage, User
 
 
 class LoginPage(LoginView):
@@ -112,3 +112,42 @@ class BoardMessageDeleteView(LoginRequiredMixin, DeleteView):
         """ Limit a User to only modifying their own data. """
         queryset = super(BoardMessageDeleteView, self).get_queryset()
         return queryset.filter(author=self.request.user).select_related('author')
+
+
+class UsersListView(LoginRequiredMixin, ListView):
+    """Shows all user registered on the website"""
+    model = User
+    template_name = 'board/users.html'
+
+
+class EditProfileView(LoginRequiredMixin, UpdateView):
+    model = User
+    form_class = EditProfileForm
+    template_name = 'board/edit_profile.html'
+    success_url = reverse_lazy('board')
+
+    def form_valid(self, form):
+        messages.success(self.request, 'Ваш профиль успешно изменен!')
+        return super().form_valid(form)
+
+    def get_object(self, queryset=None):
+        """ Hook to ensure object is owned by request.user. """
+        obj = super(EditProfileView, self).get_object()
+        if not obj.id == self.request.user.id:
+            raise Http404
+        return obj
+
+    def get_queryset(self):
+        """ Limit a User to only modifying their own data. """
+        queryset = super(EditProfileView, self).get_queryset()
+        return queryset.filter(id=self.request.user.id)
+
+
+class CustomPasswordChangeView(PasswordChangeView):
+    template_name = 'board/change_password.html'
+    form_class = CustomPasswordChangeForm
+    success_url = reverse_lazy('board')
+
+    def form_valid(self, form):
+        messages.success(self.request, 'Ваш пароль изменен успешно!')
+        return super().form_valid(form)
