@@ -4,10 +4,9 @@
 
 <h4>Вы уверены, что хотите удалить данный пост?</h4>
 <br>
-
-        <form method="POST" action="">
-            {% csrf_token %}
-            <input class="btn btn-secondary" type="submit" value="Delete">
-        </form>
+<form method="POST" action="">
+    {% csrf_token %}
+    <input class="btn btn-secondary" type="submit" value="Удалить">
+</form>
 
 {% endblock content %}

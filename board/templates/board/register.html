@@ -1,13 +1,9 @@
 {% extends 'base.html' %}
 
 {% block content %}
-
-    <h3><span class="badge bg-secondary">Для регистрации заполните форму ниже</span></h3>
-    <br>
 <form method="POST">
     {% csrf_token %}
     {{ form.as_p }}
     <button class="btn btn-secondary" type="submit">Зарегистрироваться</button>
 </form>
-
 {% endblock content %}
