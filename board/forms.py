@@ -91,7 +91,7 @@ class CustomPasswordChangeForm(PasswordChangeForm):
 
 
 class AddCommentForm(forms.ModelForm):
-    text = forms.CharField(widget=forms.TextInput(
+    text = forms.CharField(widget=forms.Textarea(
         attrs={'class': 'form-control', 'placeholder': 'Введите текст комментария...'}
     ))
 

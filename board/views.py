@@ -3,7 +3,7 @@ from django.contrib.auth import login
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import LoginView, PasswordChangeView
 from django.http import Http404, HttpResponse, HttpResponseNotAllowed
-from django.shortcuts import redirect, get_object_or_404
+from django.shortcuts import redirect, get_object_or_404, render
 from django.urls import reverse_lazy
 from django.views.generic import FormView, ListView, CreateView, DeleteView, UpdateView, DetailView
 from django.views.generic.edit import FormMixin
@@ -123,6 +123,7 @@ class UsersListView(LoginRequiredMixin, ListView):
 
 
 class EditProfileView(LoginRequiredMixin, UpdateView):
+    """The View for the ability to change personal user's data"""
     model = User
     form_class = EditProfileForm
     template_name = 'board/edit_profile.html'
@@ -146,6 +147,7 @@ class EditProfileView(LoginRequiredMixin, UpdateView):
 
 
 class CustomPasswordChangeView(PasswordChangeView):
+    """Little changed PasswordChangeView because were added css classes"""
     template_name = 'board/change_password.html'
     form_class = CustomPasswordChangeForm
     success_url = reverse_lazy('board')
@@ -156,6 +158,7 @@ class CustomPasswordChangeView(PasswordChangeView):
 
 
 class BoardMessageDetailView(LoginRequiredMixin, DetailView, FormMixin):
+    """This view shows detail about post and shows all related comments"""
     model = BoardMessage
     form_class = AddCommentForm
     template_name = 'board/board_message_detail.html'
@@ -181,19 +184,58 @@ class BoardMessageDetailView(LoginRequiredMixin, DetailView, FormMixin):
         self.object.board_message = post
         self.object.author = self.request.user
         self.object.save()
-        messages.success(self.request, 'Сообщение успешно добавлено!')
+        messages.success(self.request, 'Комментарий успешно добавлен!')
         return super().form_valid(form)
 
 
 def delete_comment(request, pk):
+    """
+        Delete view for the comments and shows success message after
+        in the same place without reloading the page. Used HTMX.
+    """
     comment = get_object_or_404(CommentMessage, id=pk)
+    if not comment.author == request.user:
+        raise Http404
     if request.method == 'POST':
         comment.delete()
         return HttpResponse(
             '''
             <div class="alert alert-success alert-dismissible fade show" role="alert">
-                Сообщение удалено!
+                Комментарий удалён!
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>
             '''
         )
-    return HttpResponseNotAllowed(["POST",])
+    return HttpResponseNotAllowed(["POST", ])
+
+
+def edit_comment(request, pk):
+    """
+        Edit view for the comments and shows edited comment right after
+        in the same place without reloading the page. Used HTMX.
+    """
+    comment = get_object_or_404(CommentMessage, id=pk)
+    if not comment.author == request.user:
+        raise Http404
+    form = AddCommentForm(request.POST or None, instance=comment)
+    post = BoardMessage.objects.get(id=comment.board_message_id)
+    if request.method == 'POST':
+        if form.is_valid():
+            form.save()
+            return redirect('comment_detail', pk=comment.id)
+    context = {
+        'form': form,
+        'comment': comment,
+        'post': post
+    }
+    return render(request, 'board/partial/comment_form.html', context=context)
+
+
+def comment_detail(request, pk):
+    """Exact this view helps to the view above it. Used Htmx."""
+    comment = get_object_or_404(CommentMessage, id=pk)
+    if not comment.author == request.user:
+        raise Http404
+    context = {
+        'comment': comment
+    }
+    return render(request, 'board/partial/comment_detail.html', context)

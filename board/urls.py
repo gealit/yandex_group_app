@@ -3,7 +3,7 @@ from django.urls import path
 
 from board.views import LoginPage, BoardListView, BoardMessageCreateView, BoardMessageDeleteView, RegisterPage, \
     BoardMessageUpdateView, UsersListView, EditProfileView, CustomPasswordChangeView, BoardMessageDetailView, \
-    delete_comment
+    delete_comment, edit_comment, comment_detail
 
 urlpatterns = [
     path('', BoardListView.as_view(), name='board'),
@@ -18,4 +18,6 @@ urlpatterns = [
     path('password-change/', CustomPasswordChangeView.as_view(), name='password_change'),
     path('post_detail/<int:pk>/', BoardMessageDetailView.as_view(), name='post_detail'),
     path('comment_delete/<int:pk>/', delete_comment, name='comment_delete'),
+    path('htmx/edit/comment/<int:pk>/', edit_comment, name='edit_comment'),
+    path('htmx/detail/comment/<int:pk>/', comment_detail, name='comment_detail'),
 ]

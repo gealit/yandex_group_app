@@ -9,25 +9,47 @@
     {% endif %}
         <div class="card-header text-center"><h2>{{ post.title }}</h2></div>
         <div class="card-body">
-
             <h5 class="card-title">Автор: {{ post.author.get_full_name }}</h5>
             <p class="card-text">{{ post.text }}</p>
             <p class="card-text"><small class="text-muted">Добавлено {{ post.date_added }}</small></p>
         </div>
     </div>
 
-
+    <div class="card">
+        <div class="card-header">
+            Комментарии {% if not post.post_comments.all.count %}отсутствуют, будьте первым!{% endif %}
+        </div>
         {% for comment in post.post_comments.all %}
             <div hx-target="this" hx-swap="outerHTML">
-        {{ comment }}
-            <button class="btn btn-secondary" type="submit" hx-post="{% url 'comment_delete' comment.id %}">Удалить комментарий</button><hr>
+                <div class="card" style="margin: 10px;">
+                    <div class="card-body">
+                        <div class="d-flex">
+                            <h5 class="card-title">{{ comment.author.get_full_name }}</h5>
+                            {% if comment.author == request.user %}
+                            <div class="d-flex ms-auto text-center">
+                                <button hx-target="#commentform{{ comment.id }}" class="text-nowrap" style="margin-right: 20px" hx-get="{% url 'edit_comment' comment.id %}" hx-swap="outerHTML">
+                                   Редактировать &#9998;
+                                </button>
+                                <button type="submit" class="btn-close" hx-post="{% url 'comment_delete' comment.id %}"></button>
+                            </div>
+                            {% endif %}
+                        </div>
+                        <p class="card-text"><small class="text-muted">Добавлено {{ comment.date_added }}</small></p>
+                        <div id="commentform{{ comment.id }}">
+                            <p class="card-text">{{ comment.text }}</p>
+                        </div>
+                    </div>
+                </div>
             </div>
         {% endfor %}
-
-        <form method="POST">
-            {% csrf_token %}
-            {{ form.as_p }}
-            <button class="btn btn-secondary" type="submit">Добавить комментарий</button>
-        </form>
-
+        <div class="card" style="margin: 10px;">
+            <div class="card-body">
+                <form method="POST">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <button class="btn btn-secondary" type="submit">Добавить комментарий</button>
+                </form>
+            </div>
+        </div>
+    </div>
 {% endblock content %}

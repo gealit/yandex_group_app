@@ -39,16 +39,16 @@
 
       <ul class="navbar-nav">
           <a class="nav-link" href="{% url 'logout' %}">
-            <button class="btn btn-outline-success" type="submit">Выйти</button>
+            <button class="btn btn-outline-dark" type="submit">Выйти</button>
           </a>
       </ul>
       {% else %}
           <ul class="navbar-nav">
               <ul class="nav-item">
-                <a href="{% url 'login' %}"><button class="btn btn-outline-success">Войти</button></a>
+                <a href="{% url 'login' %}"><button class="btn btn-outline-dark">Войти</button></a>
               </ul>
               <ul class="nav-item">
-                <a href="{% url 'register' %}"><button class="btn btn-outline-success">Зарегистрироваться</button></a>
+                <a href="{% url 'register' %}"><button class="btn btn-outline-dark">Зарегистрироваться</button></a>
               </ul>
               <ul class="nav-item">
                 <div class="btn-group dropstart">
