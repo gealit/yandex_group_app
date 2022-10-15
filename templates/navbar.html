@@ -16,6 +16,11 @@
         <li class="nav-item">
           <a class="nav-link {% if 'users' in request.path %}active{% endif %}" href="{% url 'users' %}">Пользователи</a>
         </li>
+        {% if 'post_detail' in request.path %}
+            <li class="nav-item">
+              <a class="nav-link active" href="{% url 'post_detail' post.id %}">{{ post.title }}</a>
+            </li>
+        {% endif %}
         {% endif %}
       </ul>
       {% if request.user.is_authenticated %}
@@ -39,24 +44,24 @@
       </ul>
       {% else %}
           <ul class="navbar-nav">
-          <ul class="nav-item">
-          <a href="{% url 'login' %}"><button class="btn btn-outline-success">Войти</button></a>
-          </ul>
-          <ul class="nav-item">
-          <a href="{% url 'register' %}"><button class="btn btn-outline-success">Зарегистрироваться</button></a>
-          </ul>
-          <ul class="nav-item">
-            <div class="btn-group dropstart">
-              <button type="button" class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-                Инфо
-              </button>
-              <ul class="dropdown-menu">
-                Когорта 52 yandex<br>
-                Господа, можете придумать и реализовать тут всё что угодно, вся эта тема для ознакомления<br><br>
-                Сайт очень не защищен, используйте пароли попроще и не свои :) Хотя они всё равно шифруются.
+              <ul class="nav-item">
+                <a href="{% url 'login' %}"><button class="btn btn-outline-success">Войти</button></a>
               </ul>
-            </div>
-          </ul>
+              <ul class="nav-item">
+                <a href="{% url 'register' %}"><button class="btn btn-outline-success">Зарегистрироваться</button></a>
+              </ul>
+              <ul class="nav-item">
+                <div class="btn-group dropstart">
+                  <button type="button" class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                    Инфо
+                  </button>
+                  <ul class="dropdown-menu">
+                    Когорта 52 yandex<br>
+                    Господа, можете придумать и реализовать тут всё что угодно, вся эта тема для ознакомления<br><br>
+                    Сайт очень не защищен, используйте пароли попроще и не свои :) Хотя они всё равно шифруются.
+                  </ul>
+                </div>
+              </ul>
           </ul>
       {% endif %}
     </div>

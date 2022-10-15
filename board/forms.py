@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import AuthenticationForm, PasswordChangeForm
 
-from board.models import User, BoardMessage
+from board.models import User, BoardMessage, CommentMessage
 
 
 class CustomLoginForm(AuthenticationForm):
@@ -88,3 +88,13 @@ class CustomPasswordChangeForm(PasswordChangeForm):
         super(CustomPasswordChangeForm, self).__init__(*args, **kwargs)
         for visible in self.visible_fields():
             visible.field.widget.attrs['class'] = 'form-control'
+
+
+class AddCommentForm(forms.ModelForm):
+    text = forms.CharField(widget=forms.TextInput(
+        attrs={'class': 'form-control', 'placeholder': 'Введите текст комментария...'}
+    ))
+
+    class Meta:
+        model = CommentMessage
+        fields = ('text',)

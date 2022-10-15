@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{#{% load static %}#}
+{% block content %}
+    <div class="card mb-3">
+    {% if post.image %}
+        <a href="{{ post.image.url }}">
+            <img src="{{ post.image.url }}" class="card-img-top" alt="Картинка">
+        </a>
+    {% endif %}
+        <div class="card-header text-center"><h2>{{ post.title }}</h2></div>
+        <div class="card-body">
+
+            <h5 class="card-title">Автор: {{ post.author.get_full_name }}</h5>
+            <p class="card-text">{{ post.text }}</p>
+            <p class="card-text"><small class="text-muted">Добавлено {{ post.date_added }}</small></p>
+        </div>
+    </div>
+
+
+        {% for comment in post.post_comments.all %}
+            <div hx-target="this" hx-swap="outerHTML">
+        {{ comment }}
+            <button class="btn btn-secondary" type="submit" hx-post="{% url 'comment_delete' comment.id %}">Удалить комментарий</button><hr>
+            </div>
+        {% endfor %}
+
+        <form method="POST">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button class="btn btn-secondary" type="submit">Добавить комментарий</button>
+        </form>
+
+{% endblock content %}

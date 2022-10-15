@@ -2,13 +2,15 @@ from django.contrib import messages
 from django.contrib.auth import login
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import LoginView, PasswordChangeView
-from django.http import Http404
-from django.shortcuts import redirect
+from django.http import Http404, HttpResponse, HttpResponseNotAllowed
+from django.shortcuts import redirect, get_object_or_404
 from django.urls import reverse_lazy
-from django.views.generic import FormView, ListView, CreateView, DeleteView, UpdateView
+from django.views.generic import FormView, ListView, CreateView, DeleteView, UpdateView, DetailView
+from django.views.generic.edit import FormMixin
 
-from board.forms import RegisterForm, BoardMessageCreateForm, CustomLoginForm, EditProfileForm, CustomPasswordChangeForm
-from board.models import BoardMessage, User
+from board.forms import RegisterForm, BoardMessageCreateForm, CustomLoginForm, EditProfileForm, \
+    CustomPasswordChangeForm, AddCommentForm
+from board.models import BoardMessage, User, CommentMessage
 
 
 class LoginPage(LoginView):
@@ -151,3 +153,47 @@ class CustomPasswordChangeView(PasswordChangeView):
     def form_valid(self, form):
         messages.success(self.request, 'Ваш пароль изменен успешно!')
         return super().form_valid(form)
+
+
+class BoardMessageDetailView(LoginRequiredMixin, DetailView, FormMixin):
+    model = BoardMessage
+    form_class = AddCommentForm
+    template_name = 'board/board_message_detail.html'
+    context_object_name = 'post'
+
+    def get_success_url(self, **kwargs):
+        return reverse_lazy('post_detail', kwargs={'pk': self.get_object().id})
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        return queryset.select_related('author')
+
+    def post(self, request, **kwargs):
+        form = self.get_form()
+        if form.is_valid():
+            return self.form_valid(form)
+        else:
+            return self.form_invalid(form)
+
+    def form_valid(self, form):
+        self.object = form.save(commit=False)
+        post = self.get_object()
+        self.object.board_message = post
+        self.object.author = self.request.user
+        self.object.save()
+        messages.success(self.request, 'Сообщение успешно добавлено!')
+        return super().form_valid(form)
+
+
+def delete_comment(request, pk):
+    comment = get_object_or_404(CommentMessage, id=pk)
+    if request.method == 'POST':
+        comment.delete()
+        return HttpResponse(
+            '''
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                Сообщение удалено!
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>
+            '''
+        )
+    return HttpResponseNotAllowed(["POST",])

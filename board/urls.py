@@ -1,8 +1,9 @@
-from django.contrib.auth.views import LogoutView, PasswordChangeDoneView
+from django.contrib.auth.views import LogoutView
 from django.urls import path
 
 from board.views import LoginPage, BoardListView, BoardMessageCreateView, BoardMessageDeleteView, RegisterPage, \
-    BoardMessageUpdateView, UsersListView, EditProfileView, CustomPasswordChangeView
+    BoardMessageUpdateView, UsersListView, EditProfileView, CustomPasswordChangeView, BoardMessageDetailView, \
+    delete_comment
 
 urlpatterns = [
     path('', BoardListView.as_view(), name='board'),
@@ -15,5 +16,6 @@ urlpatterns = [
     path('users/', UsersListView.as_view(), name='users'),
     path('users/<int:pk>/', EditProfileView.as_view(), name='edit_profile'),
     path('password-change/', CustomPasswordChangeView.as_view(), name='password_change'),
-    # path('password-change/done/', PasswordChangeDoneView.as_view(), name='password_change_done'),
+    path('post_detail/<int:pk>/', BoardMessageDetailView.as_view(), name='post_detail'),
+    path('comment_delete/<int:pk>/', delete_comment, name='comment_delete'),
 ]
