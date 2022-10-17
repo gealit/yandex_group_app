@@ -1,9 +1,21 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<form method="POST">
+<form class="needs-validation" method="POST">
     {% csrf_token %}
-    {{ form.as_p }}
+    {% for error in form.errors.values %}
+        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+            {{ error }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    {% endfor %}
+
+        {{ form.username.label }}
+        <p>{{ form.username }}</p>
+
+        {{ form.password.label }}
+        <p>{{ form.password }}</p>
+
     <button class="btn btn-secondary" type="submit">Войти</button>
 </form>
 {% endblock content %}

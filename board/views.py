@@ -22,7 +22,10 @@ class LoginPage(LoginView):
 
     def get_context_data(self, **kwargs):
         if not self.request.user.is_authenticated:
-            messages.success(self.request, 'Для входа введите ваш логин и пароль.')
+            messages.success(
+                self.request,
+                'Для входа введите ваш логин и пароль. Регистрацию можно найти в верхнем правом углу :)'
+            )
         return super().get_context_data(**kwargs)
 
 

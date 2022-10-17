@@ -80,7 +80,7 @@ class EditProfileForm(forms.ModelForm):
 
     class Meta:
         model = User
-        fields = ('username', 'first_name', 'last_name', 'about')
+        fields = ('username', 'first_name', 'last_name', 'about', 'foto')
 
 
 class CustomPasswordChangeForm(PasswordChangeForm):
@@ -92,7 +92,7 @@ class CustomPasswordChangeForm(PasswordChangeForm):
 
 class AddCommentForm(forms.ModelForm):
     text = forms.CharField(widget=forms.Textarea(
-        attrs={'class': 'form-control', 'placeholder': 'Введите текст комментария...'}
+        attrs={'class': 'form-control', 'placeholder': 'Введите текст комментария...', 'rows': 5, 'cols': 40}
     ))
 
     class Meta:
